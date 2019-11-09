@@ -6,49 +6,23 @@
   # '$' refers to the store value; '~' refers to NULL.
   valueStarter = [fieldStarter, storeChar, nullChar]
 
-  # List of node types.
-  compTypes = ['console', 'server']
-
   # This represents a virtual node in the Inject.ion network.
   class Node
-    constructor: (@name, @type, @fields, @linksTo) ->
+    constructor: (@name, @type, @fields, links) ->
+      console.log(@name + '->')
+      console.log(links)
+      @linksTo = {}
+      for child of links
+        if links.hasOwnProperty(child)
+          console.log(child)
+          @linksTo[child] = new Node links[child].name, links[child].type, links[child].fields, links[child].linksTo
 
     followPath: (path) ->
       currentNode = this
       if path.length != 0
         currentNode = @linksTo[path[0]]
-        currentNode.followPath(path.slice(1))
+        return currentNode.followPath(path.slice(1))
       return currentNode
-
-  # This is the network of the current level. This can change.
-  network = new Node 'valkyrie', 'console', {
-    cache: 0
-    mem: 35
-  },
-  {
-    arbiter: new Node 'arbiter', 'server', {
-      secret: 42
-      double: 32
-    },
-    {
-      erinyes: new Node 'erinyes', 'server', {
-        secret: 42
-        double: 32
-      }, {
-
-      }
-      cyclops: new Node 'cyclops', 'server', {
-        pass: 4042
-      }, {
-
-      }
-    }
-    charybdis: new Node 'charybdis', 'server', {
-      test: 20
-    }, {
-
-    }
-  }
 
   # Contains every single Inject.ion command.
   commandDictionary =
@@ -99,13 +73,15 @@
   canvas = document.getElementById('env_view')
   ctxt = canvas.getContext('2d')
 
-  # Load assets.
-  consoleImg = new Image()
-  consoleImg.onload = ->
-    redraw(network, 50, 50)
-  consoleImg.src = 'img/terminal.png'
-  serverImg = new Image()
-  serverImg.src = 'img/cloud-server.png'
+  # Load ALL assets.
+  network = null
+  
+  iconSpriteSheet = new Image()
+  iconSpriteSheet.onload = ->
+    $.getJSON('https://api.myjson.com/bins/72ubo').done (data) ->
+      network = new Node data.name, data.type, data.fields, data.linksTo
+      redraw(network, 50, 50)
+  iconSpriteSheet.src = 'img/icon_spritesheet.png'
 
   # Distance in pixels between a node and its children.
   nodeChildrenDistance = 300
@@ -118,11 +94,15 @@
   # s_range: the start of the angle range this node can draw its children on.
   # e_range: the end of the angle range this node can draw its children on.
   renderView = (node, x, y, s_range, e_range) ->
-    console.log(node)
-    if node.type == compTypes[0]
-      ctxt.drawImage(consoleImg, x, y, 100, 100)
-    else if node.type == compTypes[1]
-      ctxt.drawImage(serverImg, x, y, 100, 100)
+    if !node?
+      return
+    if node.type == 'console'
+      ctxt.drawImage(iconSpriteSheet, 0, 0, 240, 240, x, y, 100, 100)
+    else if node.type == 'server'
+      ctxt.drawImage(iconSpriteSheet, 480, 0, 240, 240, x, y, 100, 100)
+    else if node.type == 'computer'
+      ctxt.drawImage(iconSpriteSheet, 240, 0, 240, 240, x, y, 100, 100)
+
     ctxt.font = '20px Fira Code'
     ctxt.fillText('@' + node.name, x, y + 100 + 20, 200)
 
@@ -181,7 +161,14 @@
 
     constructor: (@code) ->
 
-    run: (tree) ->
+    loadTree: (tree) ->
+      env.tree = tree
+
+    runNext: ->
+      splitLines = @code.split('\n')
+      runLine(splitLines[env.line++])
+
+    runAll: (tree) ->
       env.tree = tree
       splitLines = @code.split('\n')
       runLine(splitLines[env.line++]) while env.line < splitLines.length
@@ -191,8 +178,20 @@
       env = commandDictionary[lexemes[0]](lexemes.slice(1), env)
       redraw(env.tree, 50, 50)
 
-  $('#injection_run').click (event) ->
+  currentRunner = null
+
+  $('#injection_reset_env').click (event) ->
+    currentRunner = null
+
+  $('#injection_run_line').click (event) ->
     event.preventDefault()
-    runner = new InjectionRunner $('#injection_code').val()
-    runner.run(network)
+    if !currentRunner?
+      currentRunner = new InjectionRunner $('#injection_code').val()
+    currentRunner.loadTree(network)
+    currentRunner.runNext()
+
+  $('#injection_run_all').click (event) ->
+    event.preventDefault()
+    currentRunner = new InjectionRunner $('#injection_code').val()
+    currentRunner.runAll(network)
 ) jQuery

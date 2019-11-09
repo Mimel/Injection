@@ -69,6 +69,6 @@ html, body {
   font-family: 'Fira Code', monospace;
 }
 
-#injection_run {
+#main_sidebar > button {
   font-family: 'Fira Code', monospace;
 }

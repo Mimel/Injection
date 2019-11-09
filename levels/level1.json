@@ -1,0 +1,27 @@
+{
+  "name": "valkyrie",
+  "type": "console",
+  "fields": {
+    "cache": 0,
+    "mem": 35
+  },
+  "linksTo": {
+    "arbiter": {
+      "name": "arbiter",
+      "type": "server",
+      "fields": {
+        "secret": 42,
+        "double": 32
+      },
+      "linksTo": {}
+    },
+    "charybdis": {
+      "name": "charybdis",
+      "type": "computer",
+      "fields": {
+        "test": 20
+      },
+      "linksTo": {}
+    }
+  }
+}
