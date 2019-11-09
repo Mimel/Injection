@@ -21,7 +21,25 @@
       "fields": {
         "test": 20
       },
-      "linksTo": {}
+      "linksTo": {
+        "erinyes": {
+          "name": "erinyes",
+          "type": "server",
+          "fields": {
+            "secret": 42,
+            "double": 32
+          },
+          "linksTo": {}
+        },
+        "cyclops": {
+          "name": "cyclops",
+          "type": "computer",
+          "fields": {
+            "test": 20
+          },
+          "linksTo": {}
+        }
+      }
     }
   }
 }

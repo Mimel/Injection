@@ -15,12 +15,9 @@
         this.name = name;
         this.type = type;
         this.fields = fields;
-        console.log(this.name + '->');
-        console.log(links);
         this.linksTo = {};
         for (child in links) {
           if (links.hasOwnProperty(child)) {
-            console.log(child);
             this.linksTo[child] = new Node(links[child].name, links[child].type, links[child].fields, links[child].linksTo);
           }
         }
@@ -91,11 +88,14 @@
     ctxt = canvas.getContext('2d');
     // Load ALL assets.
     network = null;
+    currentRunner = null;
     iconSpriteSheet = new Image();
     iconSpriteSheet.onload = function() {
-      return $.getJSON('https://api.myjson.com/bins/72ubo').done(function(data) {
+      return $.getJSON('https://api.myjson.com/bins/uu92s').done(function(data) {
         network = new Node(data.name, data.type, data.fields, data.linksTo);
-        return redraw(network, 50, 50);
+        currentRunner = new InjectionRunner;
+        currentRunner.load(null, network);
+        return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50);
       });
     };
     iconSpriteSheet.src = 'img/icon_spritesheet.png';
@@ -109,17 +109,20 @@
     // y: the y-location to draw the node at.
     // s_range: the start of the angle range this node can draw its children on.
     // e_range: the end of the angle range this node can draw its children on.
-    renderView = function(node, x, y, s_range, e_range) {
-      var child, currentChild, drawAngle, end_x, end_y, field, new_e_range, new_s_range, numChildren, offset, results;
-      if (node == null) {
-        return;
+    renderView = function(node, path, store, x, y, s_range, e_range) {
+      var child, colorOffset, currentChild, drawAngle, end_x, end_y, field, isCurrentNode, new_e_range, new_s_range, numChildren, offset, results;
+      colorOffset = 0;
+      isCurrentNode = false;
+      if (path[path.length - 1] === node.name) {
+        colorOffset = 240;
+        isCurrentNode = true;
       }
       if (node.type === 'console') {
-        ctxt.drawImage(iconSpriteSheet, 0, 0, 240, 240, x, y, 100, 100);
+        ctxt.drawImage(iconSpriteSheet, 0, colorOffset, 240, 240, x, y, 100, 100);
       } else if (node.type === 'server') {
-        ctxt.drawImage(iconSpriteSheet, 480, 0, 240, 240, x, y, 100, 100);
+        ctxt.drawImage(iconSpriteSheet, 480, colorOffset, 240, 240, x, y, 100, 100);
       } else if (node.type === 'computer') {
-        ctxt.drawImage(iconSpriteSheet, 240, 0, 240, 240, x, y, 100, 100);
+        ctxt.drawImage(iconSpriteSheet, 240, colorOffset, 240, 240, x, y, 100, 100);
       }
       ctxt.font = '20px Fira Code';
       ctxt.fillText('@' + node.name, x, y + 100 + 20, 200);
@@ -130,6 +133,11 @@
           ctxt.fillText('#' + field + ' → ' + node.fields[field], x + 5, y + offset, 200);
           offset += 15;
         }
+      }
+      if (isCurrentNode) {
+        ctxt.fillStyle = '#FF3797';
+        ctxt.fillText('$' + ' → ' + store, x + 5, y + offset, 200);
+        ctxt.fillStyle = 'black';
       }
       if (Object.keys(node.linksTo).length > 0) {
         numChildren = Object.keys(node.linksTo).length;
@@ -148,7 +156,7 @@
             ctxt.lineWidth = 5;
             ctxt.strokeStyle = 'rgba(100, 100, 100, 0.3)';
             ctxt.stroke();
-            renderView(node.linksTo[child], end_x, end_y, new_s_range, new_e_range);
+            renderView(node.linksTo[child], path, store, end_x, end_y, new_s_range, new_e_range);
             results.push(currentChild += 1);
           } else {
             results.push(void 0);
@@ -157,15 +165,19 @@
         return results;
       }
     };
-    redraw = function(node, x, y) {
+    redraw = function(node, path, store, x, y) {
       ctxt.clearRect(0, 0, canvas.width, canvas.height);
-      return renderView(node, x, y, 0, 90);
+      if (path.length === 0) {
+        return renderView(node, [node.name], store, x, y, 0, 90);
+      } else {
+        return renderView(node, path, store, x, y, 0, 90);
+      }
     };
     // Adjust canvas bounds on resize, and redraw contents.
     window.addEventListener('resize', function(event) {
       ctxt.canvas.width = window.innerWidth - 300;
       ctxt.canvas.height = window.innerHeight;
-      return redraw(network, 50, 50);
+      return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().path, 50, 50);
     });
     // Set canvas bounds.
     ctxt.canvas.width = window.innerWidth - 300;
@@ -177,11 +189,28 @@
 
       // This creates a rudimentary environment for the Inject.ion code.
       class InjectionRunner {
-        constructor(code) {
-          this.code = code;
+        constructor() {
+          this.code = null;
         }
 
-        loadTree(tree) {
+        env() {
+          return env;
+        }
+
+        eraseAll() {
+          env.store = 0;
+          env.line = 0;
+          env.path = [];
+          env.tree = null;
+          return this.code = null;
+        }
+
+        isEmpty() {
+          return this.code == null;
+        }
+
+        load(code, tree) {
+          this.code = code;
           return env.tree = tree;
         }
 
@@ -191,9 +220,8 @@
           return runLine(splitLines[env.line++]);
         }
 
-        runAll(tree) {
+        runAll() {
           var results, splitLines;
-          env.tree = tree;
           splitLines = this.code.split('\n');
           results = [];
           while (env.line < splitLines.length) {
@@ -215,28 +243,26 @@
         var lexemes;
         lexemes = line.split(' ');
         env = commandDictionary[lexemes[0]](lexemes.slice(1), env);
-        return redraw(env.tree, 50, 50);
+        return redraw(env.tree, env.path, env.store, 50, 50);
       };
 
       return InjectionRunner;
 
     }).call(this);
-    currentRunner = null;
     $('#injection_reset_env').click(function(event) {
-      return currentRunner = null;
+      return currentRunner.eraseAll();
     });
     $('#injection_run_line').click(function(event) {
       event.preventDefault();
-      if (currentRunner == null) {
-        currentRunner = new InjectionRunner($('#injection_code').val());
+      if (currentRunner.isEmpty()) {
+        currentRunner.load($('#injection_code').val(), network);
       }
-      currentRunner.loadTree(network);
       return currentRunner.runNext();
     });
     return $('#injection_run_all').click(function(event) {
       event.preventDefault();
-      currentRunner = new InjectionRunner($('#injection_code').val());
-      return currentRunner.runAll(network);
+      currentRunner.load($('#injection_code').val(), network);
+      return currentRunner.runAll();
     });
   })(jQuery);
 
