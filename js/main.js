@@ -318,6 +318,20 @@
         return results1;
       }
     });
+    // Selects a new level.
+    $('.level').click(function(event) {
+      return $.getJSON('https://api.myjson.com/bins/pv2jm').done(function(data) {
+        starter = data.startingTree;
+        goal = data.completeTree;
+        mission = data.mission;
+        starter = new Node(starter.name, starter.type, starter.fields, starter.linksTo);
+        network = starter.copy();
+        $('#mission_text').text(mission);
+        currentRunner = new InjectionRunner;
+        currentRunner.load(null, network);
+        return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50);
+      });
+    });
     $('#injection_reset_env').click(function(event) {
       currentRunner.eraseAll();
       network = starter.copy();

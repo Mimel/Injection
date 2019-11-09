@@ -1,0 +1,77 @@
+{
+  "startingTree": {
+    "name": "valkyrie",
+    "type": "console",
+    "fields": {
+      "cache": 0
+    },
+    "linksTo": {
+      "idyia": {
+        "name": "idyia",
+        "type": "computer",
+        "fields": {
+          "heat": 340
+        },
+        "linksTo": {}
+      },
+      "metis": {
+        "name": "metis",
+        "type": "computer",
+        "fields": {
+          "heat": 170
+        },
+        "linksTo": {
+          "xanthe": {
+            "name": "xanthe",
+            "type": "server",
+            "fields": {
+              "lockbox": 623281
+            },
+            "linksTo": {
+
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "completeTree": {
+    "name": "valkyrie",
+    "type": "console",
+    "fields": {
+      "cache": 623281
+    },
+    "linksTo": {
+      "idyia": {
+        "name": "idyia",
+        "type": "computer",
+        "fields": {
+          "heat": 340
+        },
+        "linksTo": {}
+      },
+      "metis": {
+        "name": "metis",
+        "type": "computer",
+        "fields": {
+          "heat": 170
+        },
+        "linksTo": {
+          "xanthe": {
+            "name": "xanthe",
+            "type": "server",
+            "fields": {
+              "lockbox": 623281
+            },
+            "linksTo": {
+
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "mission": "Set both Charybdis' and Scylla's XRMs to the value in your cache."
+}

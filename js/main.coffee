@@ -259,6 +259,22 @@
         $('#line_numbers > li').last().remove()
   )
 
+  # Selects a new level.
+  $('.level').click (event) ->
+    $.getJSON('https://api.myjson.com/bins/pv2jm').done (data) ->
+      starter = data.startingTree
+      goal = data.completeTree
+      mission = data.mission
+
+      starter = new Node starter.name, starter.type, starter.fields, starter.linksTo
+      network = starter.copy()
+
+      $('#mission_text').text(mission)
+
+      currentRunner = new InjectionRunner
+      currentRunner.load(null, network)
+      redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50)
+
   $('#injection_reset_env').click (event) ->
     currentRunner.eraseAll()
     network = starter.copy()
