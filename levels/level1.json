@@ -1,45 +1,55 @@
 {
-  "name": "valkyrie",
-  "type": "console",
-  "fields": {
-    "cache": 0,
-    "mem": 35
-  },
-  "linksTo": {
-    "arbiter": {
-      "name": "arbiter",
-      "type": "server",
-      "fields": {
-        "secret": 42,
-        "double": 32
-      },
-      "linksTo": {}
+  "startingTree": {
+    "name": "valkyrie",
+    "type": "console",
+    "fields": {
+      "cache": 808
     },
-    "charybdis": {
-      "name": "charybdis",
-      "type": "computer",
-      "fields": {
-        "test": 20
-      },
-      "linksTo": {
-        "erinyes": {
-          "name": "erinyes",
-          "type": "server",
-          "fields": {
-            "secret": 42,
-            "double": 32
-          },
-          "linksTo": {}
+    "linksTo": {
+      "scylla": {
+        "name": "scylla",
+        "type": "computer",
+        "fields": {
+          "xrm": 303
         },
-        "cyclops": {
-          "name": "cyclops",
-          "type": "computer",
-          "fields": {
-            "test": 20
-          },
-          "linksTo": {}
-        }
+        "linksTo": {}
+      },
+      "charybdis": {
+        "name": "charybdis",
+        "type": "computer",
+        "fields": {
+          "xrm": 303
+        },
+        "linksTo": {}
       }
     }
-  }
+  },
+
+  "completeTree": {
+    "name": "valkyrie",
+    "type": "console",
+    "fields": {
+      "cache": 808
+    },
+    "linksTo": {
+      "scylla": {
+        "name": "scylla",
+        "type": "computer",
+        "fields": {
+          "xrm": 808
+        },
+        "linksTo": {}
+      },
+      "charybdis": {
+        "name": "charybdis",
+        "type": "computer",
+        "fields": {
+          "xrm": 808
+        },
+        "linksTo": {}
+      }
+    }
+  },
+
+  "mission": "Set both Charybdis' and Scylla's XRMs to the value in your cache."
 }

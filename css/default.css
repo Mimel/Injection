@@ -60,6 +60,7 @@ html, body {
   font-family: 'Fira Code', monospace;
   text-align: center;
   color: #FFFFFF;
+  font-size: 2em;
 }
 
 #sidebar_title > b {

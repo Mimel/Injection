@@ -14,12 +14,34 @@
         if links.hasOwnProperty(child)
           @linksTo[child] = new Node links[child].name, links[child].type, links[child].fields, links[child].linksTo
 
+    copy: () ->
+      return new Node @name, @type, @fields, @linksTo
+
     followPath: (path) ->
       currentNode = this
       if path.length != 0
         currentNode = @linksTo[path[0]]
         return currentNode.followPath(path.slice(1))
       return currentNode
+
+    # No validation for disparate trees.
+    checkAgainst: (node) ->
+
+      # Compare all fields.
+      for field of @fields
+        if @fields.hasOwnProperty(field)
+          console.log(@fields[field])
+          console.log(node.fields[field])
+          if @fields[field] != node.fields[field]
+            return false
+
+      # Go to compare all fields of children.
+      for link of @linksTo
+        if @linksTo.hasOwnProperty(link)
+          if !@linksTo[link].checkAgainst(node.linksTo[link])
+            return false
+
+      return true
 
   # Contains every single Inject.ion command.
   commandDictionary =
@@ -71,13 +93,23 @@
   ctxt = canvas.getContext('2d')
 
   # Load ALL assets.
+  starter = null
+  goal = null
+  mission = null
   network = null
   currentRunner = null
 
   iconSpriteSheet = new Image()
   iconSpriteSheet.onload = ->
-    $.getJSON('https://api.myjson.com/bins/uu92s').done (data) ->
-      network = new Node data.name, data.type, data.fields, data.linksTo
+    $.getJSON('https://api.myjson.com/bins/gz2he').done (data) ->
+      starter = data.startingTree
+      goal = data.completeTree
+      mission = data.mission
+
+
+      starter = new Node starter.name, starter.type, starter.fields, starter.linksTo
+      network = starter.copy()
+
       currentRunner = new InjectionRunner
       currentRunner.load(null, network)
       redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50)
@@ -201,9 +233,11 @@
       runLine(splitLines[env.line++]) while env.line < splitLines.length
 
     runLine = (line) ->
-
       lexemes = line.split(' ')
       env = commandDictionary[lexemes[0]](lexemes.slice(1), env)
+      redraw(env.tree, env.path, env.store, 50, 50)
+
+    redraw: ->
       redraw(env.tree, env.path, env.store, 50, 50)
 
   # Adjusts line numbers.
@@ -223,6 +257,10 @@
 
   $('#injection_reset_env').click (event) ->
     currentRunner.eraseAll()
+    network = starter.copy()
+    currentRunner.load(null, network)
+    currentRunner.redraw()
+
 
   $('#injection_run_line').click (event) ->
     event.preventDefault()
@@ -234,4 +272,5 @@
     event.preventDefault()
     currentRunner.load($('#injection_code').val(), network)
     currentRunner.runAll()
+    console.log(network.checkAgainst(goal))
 ) jQuery
