@@ -6,10 +6,12 @@
   # '$' refers to the store value; '~' refers to NULL.
   valueStarter = [fieldStarter, storeChar, nullChar]
 
+  # List of node types.
+  compTypes = ['console', 'server']
 
   # This represents a virtual node in the Inject.ion network.
   class Node
-    constructor: (@name, @fields, @linksTo) ->
+    constructor: (@name, @type, @fields, @linksTo) ->
 
     followPath: (path) ->
       currentNode = this
@@ -19,11 +21,12 @@
       return currentNode
 
   # This is the network of the current level. This can change.
-  network = new Node 'valkyrie', {
+  network = new Node 'valkyrie', 'console', {
     cache: 0
+    mem: 35
   },
   {
-    arbiter: new Node 'arbiter', {
+    arbiter: new Node 'arbiter', 'server', {
       secret: 42
       double: 32
     }, {
@@ -75,6 +78,58 @@
       console.log(JSON.stringify(env))
       return env
 
+  # Forgive me, codemasters, but I need to insert the view into this model class, just this once.
+
+  canvas = document.getElementById('env_view')
+  ctxt = canvas.getContext('2d')
+
+  # Load assets.
+  consoleImg = new Image()
+  consoleImg.onload = ->
+    redraw(network, 100, 50)
+  consoleImg.src = 'img/terminal.png'
+  serverImg = new Image()
+  serverImg.src = 'img/cloud-server.png'
+
+  # End asset loading.
+  renderView = (node, x, y) ->
+    console.log(node)
+    if node.type == compTypes[0]
+      ctxt.drawImage(consoleImg, x, y, 100, 100)
+    else if node.type == compTypes[1]
+      ctxt.drawImage(serverImg, x, y, 100, 100)
+    ctxt.font = '20px Fira Code'
+    ctxt.fillText('@' + node.name, x, y + 100 + 20, 200)
+
+    ctxt.font = '15px Fira Code'
+    offset = 135
+    for field of node.fields
+      if node.fields.hasOwnProperty(field)
+        ctxt.fillText('#' + field + ' → ' + node.fields[field], x + 5, y + offset, 200)
+        offset += 15
+
+    if Object.keys(node.linksTo).length > 0
+      numChildren = Object.keys(node.linksTo).length
+      for child of node.linksTo
+        if node.linksTo.hasOwnProperty(child)
+          renderView(node.linksTo[child], x, y + 300)
+
+  redraw = (node, x, y) ->
+    ctxt.clearRect(0, 0, canvas.width, canvas.height)
+    renderView(node, x, y)
+
+  # Adjust canvas bounds on resize, and redraw contents.
+  window.addEventListener 'resize', (event) ->
+    ctxt.canvas.width = window.innerWidth - 300
+    ctxt.canvas.height = window.innerHeight
+    redraw(network, 100, 50)
+
+  # Set canvas bounds.
+  ctxt.canvas.width = window.innerWidth - 300
+  ctxt.canvas.height = window.innerHeight
+
+  # End View, resume Model.
+
   # This creates a rudimentary environment for the Inject.ion code.
   class InjectionRunner
     env = {
@@ -94,6 +149,7 @@
     runLine = (line) ->
       lexemes = line.split(' ')
       env = commandDictionary[lexemes[0]](lexemes.slice(1), env)
+      redraw(env.tree, 100, 50)
 
   $('#injection_run').click (event) ->
     event.preventDefault()
