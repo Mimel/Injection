@@ -25,8 +25,8 @@
 
       copy() {
         var deepCopy;
-        // Thanks, Mike Lewis.
-        // Retrieved from https://stackoverflow.com/questions/5364650/cloning-an-object-in-javascript
+        // Retrieved from Michael Jasper's answer,
+        // From https://stackoverflow.com/questions/5364650/cloning-an-object-in-javascript
         deepCopy = JSON.parse(JSON.stringify(this));
         return new Node(deepCopy.name, deepCopy.type, deepCopy.fields, deepCopy.linksTo);
       }
@@ -132,8 +132,7 @@
         mission = data.mission;
         starter = new Node(starter.name, starter.type, starter.fields, starter.linksTo);
         network = starter.copy();
-        console.log(starter);
-        console.log(network);
+        $('#mission_text').text(mission);
         currentRunner = new InjectionRunner;
         currentRunner.load(null, network);
         return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50);
@@ -217,12 +216,12 @@
     // Adjust canvas bounds on resize, and redraw contents.
     window.addEventListener('resize', function(event) {
       ctxt.canvas.width = window.innerWidth - 325;
-      ctxt.canvas.height = window.innerHeight;
-      return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().path, 50, 50);
+      ctxt.canvas.height = window.innerHeight - 100;
+      return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50);
     });
     // Set canvas bounds.
     ctxt.canvas.width = window.innerWidth - 325;
-    ctxt.canvas.height = window.innerHeight;
+    ctxt.canvas.height = window.innerHeight - 100;
     InjectionRunner = (function() {
       var env, runLine;
 
