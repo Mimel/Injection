@@ -29,6 +29,22 @@
     arbiter: new Node 'arbiter', 'server', {
       secret: 42
       double: 32
+    },
+    {
+      erinyes: new Node 'erinyes', 'server', {
+        secret: 42
+        double: 32
+      }, {
+
+      }
+      cyclops: new Node 'cyclops', 'server', {
+        pass: 4042
+      }, {
+
+      }
+    }
+    charybdis: new Node 'charybdis', 'server', {
+      test: 20
     }, {
 
     }
@@ -86,13 +102,22 @@
   # Load assets.
   consoleImg = new Image()
   consoleImg.onload = ->
-    redraw(network, 100, 50)
+    redraw(network, 50, 50)
   consoleImg.src = 'img/terminal.png'
   serverImg = new Image()
   serverImg.src = 'img/cloud-server.png'
 
+  # Distance in pixels between a node and its children.
+  nodeChildrenDistance = 300
   # End asset loading.
-  renderView = (node, x, y) ->
+
+  # Renders a view of the network.
+  # node: the network node to draw.
+  # x: the x-location to draw the node at.
+  # y: the y-location to draw the node at.
+  # s_range: the start of the angle range this node can draw its children on.
+  # e_range: the end of the angle range this node can draw its children on.
+  renderView = (node, x, y, s_range, e_range) ->
     console.log(node)
     if node.type == compTypes[0]
       ctxt.drawImage(consoleImg, x, y, 100, 100)
@@ -110,19 +135,34 @@
 
     if Object.keys(node.linksTo).length > 0
       numChildren = Object.keys(node.linksTo).length
+      currentChild = 1
       for child of node.linksTo
         if node.linksTo.hasOwnProperty(child)
-          renderView(node.linksTo[child], x, y + 300)
+          drawAngle = ((e_range - s_range) / (numChildren + 1)) * currentChild * 0.01745329
+          new_s_range = s_range + ((e_range - s_range) / numChildren) * (currentChild - 1)
+          new_e_range = new_s_range + ((e_range - s_range) / numChildren)
+          end_x = x + nodeChildrenDistance * Math.cos(drawAngle)
+          end_y = y + nodeChildrenDistance * Math.sin(drawAngle)
+
+          ctxt.beginPath()
+          ctxt.moveTo(x + 50, y + 50)
+          ctxt.lineTo(end_x + 50, end_y + 50)
+          ctxt.lineWidth = 5
+          ctxt.strokeStyle = 'rgba(100, 100, 100, 0.3)'
+          ctxt.stroke()
+
+          renderView(node.linksTo[child], end_x, end_y, new_s_range, new_e_range)
+          currentChild += 1
 
   redraw = (node, x, y) ->
     ctxt.clearRect(0, 0, canvas.width, canvas.height)
-    renderView(node, x, y)
+    renderView(node, x, y, 0, 90)
 
   # Adjust canvas bounds on resize, and redraw contents.
   window.addEventListener 'resize', (event) ->
     ctxt.canvas.width = window.innerWidth - 300
     ctxt.canvas.height = window.innerHeight
-    redraw(network, 100, 50)
+    redraw(network, 50, 50)
 
   # Set canvas bounds.
   ctxt.canvas.width = window.innerWidth - 300
@@ -149,7 +189,7 @@
     runLine = (line) ->
       lexemes = line.split(' ')
       env = commandDictionary[lexemes[0]](lexemes.slice(1), env)
-      redraw(env.tree, 100, 50)
+      redraw(env.tree, 50, 50)
 
   $('#injection_run').click (event) ->
     event.preventDefault()
