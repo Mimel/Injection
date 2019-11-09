@@ -1,0 +1,32 @@
+html, body {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+#omniencapsulator {
+  display: flex;
+
+  width: 100%;
+  height: inherit;
+}
+
+#main_sidebar {
+  flex-shrink: 0;
+
+  min-width: 300px;
+  width: 300px;
+  height: inherit;
+
+  background-color: #AAAAAA;
+}
+
+#main_screen {
+  flex-grow: 1;
+
+  height: inherit;
+
+  background-color: #DDDDDD;
+}
