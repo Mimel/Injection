@@ -153,12 +153,12 @@
 
   # Adjust canvas bounds on resize, and redraw contents.
   window.addEventListener 'resize', (event) ->
-    ctxt.canvas.width = window.innerWidth - 300
+    ctxt.canvas.width = window.innerWidth - 325
     ctxt.canvas.height = window.innerHeight
     redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().path, 50, 50)
 
   # Set canvas bounds.
-  ctxt.canvas.width = window.innerWidth - 300
+  ctxt.canvas.width = window.innerWidth - 325
   ctxt.canvas.height = window.innerHeight
 
   # End View, resume Model.
@@ -205,6 +205,21 @@
       lexemes = line.split(' ')
       env = commandDictionary[lexemes[0]](lexemes.slice(1), env)
       redraw(env.tree, env.path, env.store, 50, 50)
+
+  # Adjusts line numbers.
+  $('#injection_code').bind('input', (event) ->
+    numNewLines = 1
+    for character in $('#injection_code').val()
+      if character == '\n'
+        numNewLines += 1
+
+    if numNewLines > $('.line_num').length
+      while $('.line_num').length < numNewLines
+        $('#line_numbers').append('<li class=\'line_num\'>' + ($('.line_num').length + 1) + '</li>')
+    else if numNewLines < $('.line_num').length
+      while $('.line_num').length > numNewLines
+        $('#line_numbers > li').last().remove()
+  )
 
   $('#injection_reset_env').click (event) ->
     currentRunner.eraseAll()

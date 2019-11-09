@@ -3,7 +3,7 @@
   src: url('../fonts/FiraCode/FiraCode-Regular.otf');
 }
 
-html, body, h1, canvas {
+html, body, h1, canvas, ol, textarea {
   margin: 0;
   padding: 0;
 }
@@ -26,7 +26,7 @@ html, body {
   flex-shrink: 0;
 
   min-width: 300px;
-  width: 300px;
+  width: 325px;
   height: inherit;
 
   box-sizing: border-box;
@@ -36,7 +36,7 @@ html, body {
   padding-top: 10px;
   padding-bottom: 10px;
 
-  background-color: #AAAAAA;
+  background-color: #666666;
 }
 
 #main_screen {
@@ -59,14 +59,55 @@ html, body {
 #sidebar_title {
   font-family: 'Fira Code', monospace;
   text-align: center;
+  color: #FFFFFF;
+}
+
+#sidebar_title > b {
+  color: #FF3797;
+}
+
+#ide {
+  display: flex;
+  flex-grow: 1;
+
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#line_numbers {
+  background-color: #FF3797;
+
+  box-sizing: border-box;
+
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  width: 20px;
+  height: 100%;
+
+  font-family: 'Fira Code', monospace;
+}
+
+.line_num {
+  list-style: none;
+  text-align: center;
+  font-family: 'Fira Code', monospace;
+  font-size: 1em;
 }
 
 #injection_code {
-  flex-grow: 1;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 
+  flex-grow: 1;
   resize: none;
 
+  border: 0;
+
   font-family: 'Fira Code', monospace;
+  font-size: 1em;
 }
 
 #main_sidebar > button {

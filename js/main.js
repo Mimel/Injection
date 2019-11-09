@@ -175,12 +175,12 @@
     };
     // Adjust canvas bounds on resize, and redraw contents.
     window.addEventListener('resize', function(event) {
-      ctxt.canvas.width = window.innerWidth - 300;
+      ctxt.canvas.width = window.innerWidth - 325;
       ctxt.canvas.height = window.innerHeight;
       return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().path, 50, 50);
     });
     // Set canvas bounds.
-    ctxt.canvas.width = window.innerWidth - 300;
+    ctxt.canvas.width = window.innerWidth - 325;
     ctxt.canvas.height = window.innerHeight;
     InjectionRunner = (function() {
       var env, runLine;
@@ -249,6 +249,31 @@
       return InjectionRunner;
 
     }).call(this);
+    // Adjusts line numbers.
+    $('#injection_code').bind('input', function(event) {
+      var character, i, len, numNewLines, ref, results, results1;
+      numNewLines = 1;
+      ref = $('#injection_code').val();
+      for (i = 0, len = ref.length; i < len; i++) {
+        character = ref[i];
+        if (character === '\n') {
+          numNewLines += 1;
+        }
+      }
+      if (numNewLines > $('.line_num').length) {
+        results = [];
+        while ($('.line_num').length < numNewLines) {
+          results.push($('#line_numbers').append('<li class=\'line_num\'>' + ($('.line_num').length + 1) + '</li>'));
+        }
+        return results;
+      } else if (numNewLines < $('.line_num').length) {
+        results1 = [];
+        while ($('.line_num').length > numNewLines) {
+          results1.push($('#line_numbers > li').last().remove());
+        }
+        return results1;
+      }
+    });
     $('#injection_reset_env').click(function(event) {
       return currentRunner.eraseAll();
     });
