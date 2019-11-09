@@ -15,7 +15,10 @@
           @linksTo[child] = new Node links[child].name, links[child].type, links[child].fields, links[child].linksTo
 
     copy: () ->
-      return new Node @name, @type, @fields, @linksTo
+      # Retrieved from Michael Jasper's answer,
+      # From https://stackoverflow.com/questions/5364650/cloning-an-object-in-javascript
+      deepCopy = JSON.parse(JSON.stringify(this))
+      return new Node deepCopy.name, deepCopy.type, deepCopy.fields, deepCopy.linksTo
 
     followPath: (path) ->
       currentNode = this
@@ -106,9 +109,11 @@
       goal = data.completeTree
       mission = data.mission
 
-
       starter = new Node starter.name, starter.type, starter.fields, starter.linksTo
       network = starter.copy()
+
+      console.log(starter)
+      console.log(network)
 
       currentRunner = new InjectionRunner
       currentRunner.load(null, network)
@@ -258,9 +263,10 @@
   $('#injection_reset_env').click (event) ->
     currentRunner.eraseAll()
     network = starter.copy()
+    console.log(network)
+    console.log(starter)
     currentRunner.load(null, network)
     currentRunner.redraw()
-
 
   $('#injection_run_line').click (event) ->
     event.preventDefault()

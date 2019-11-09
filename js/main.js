@@ -24,7 +24,11 @@
       }
 
       copy() {
-        return new Node(this.name, this.type, this.fields, this.linksTo);
+        var deepCopy;
+        // Thanks, Mike Lewis.
+        // Retrieved from https://stackoverflow.com/questions/5364650/cloning-an-object-in-javascript
+        deepCopy = JSON.parse(JSON.stringify(this));
+        return new Node(deepCopy.name, deepCopy.type, deepCopy.fields, deepCopy.linksTo);
       }
 
       followPath(path) {
@@ -128,6 +132,8 @@
         mission = data.mission;
         starter = new Node(starter.name, starter.type, starter.fields, starter.linksTo);
         network = starter.copy();
+        console.log(starter);
+        console.log(network);
         currentRunner = new InjectionRunner;
         currentRunner.load(null, network);
         return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50);
@@ -316,6 +322,8 @@
     $('#injection_reset_env').click(function(event) {
       currentRunner.eraseAll();
       network = starter.copy();
+      console.log(network);
+      console.log(starter);
       currentRunner.load(null, network);
       return currentRunner.redraw();
     });
