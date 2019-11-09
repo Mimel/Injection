@@ -337,7 +337,9 @@
       event.preventDefault();
       currentRunner.load($('#injection_code').val(), network);
       currentRunner.runAll();
-      return console.log(network.checkAgainst(goal));
+      if (network.checkAgainst(goal)) {
+        return $('#win_confirm').fadeIn(300);
+      }
     });
   })(jQuery);
 

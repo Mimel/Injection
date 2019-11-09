@@ -277,5 +277,6 @@
     event.preventDefault()
     currentRunner.load($('#injection_code').val(), network)
     currentRunner.runAll()
-    console.log(network.checkAgainst(goal))
+    if network.checkAgainst(goal)
+      $('#win_confirm').fadeIn(300)
 ) jQuery
