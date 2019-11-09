@@ -1,4 +1,36 @@
 (($) ->
+  nodeStarter = '@'
+  fieldStarter = '#'
+  storeChar = '$'
+  nullChar = '~'
+  # '$' refers to the store value; '~' refers to NULL.
+  valueStarter = [fieldStarter, storeChar, nullChar]
+
+
+  # This represents a virtual node in the Inject.ion network.
+  class Node
+    constructor: (@name, @fields, @linksTo) ->
+
+    followPath: (path) ->
+      currentNode = this
+      if path.length != 0
+        currentNode = @linksTo[path[0]]
+        currentNode.followPath(path.slice(1))
+      return currentNode
+
+  # This is the network of the current level. This can change.
+  network = new Node 'valkyrie', {
+    cache: 0
+  },
+  {
+    arbiter: new Node 'arbiter', {
+      secret: 42
+      double: 32
+    }, {
+
+    }
+  }
+
   # Contains every single Inject.ion command.
   commandDictionary =
     # Goes to the following node, carrying a value.
@@ -6,14 +38,24 @@
     inject: (values, env) ->
       node = values[0]
       value = values[1]
-      console.log('inj')
+      # '$' and '~' will do nothing.
+      if node.charAt(0) == nodeStarter and valueStarter.includes(value.charAt(0))
+        if value.charAt(0) == fieldStarter
+          env.store = env.tree.followPath(env.path).fields[value.substring(1)]
+        env.path.push(node.substring(1))
+
+      console.log(JSON.stringify(env))
       return env
 
     # Returns to the node's parrent, carrying the value of the field indicated and setting it into store.
-    # Expects 1 parameter, a field.
+    # Expects 1 parameter, a value.
     return: (values, env) ->
       field = values[0]
-      console.log('ret')
+      if field.charAt(0) == fieldStarter
+        env.store = env.tree.followPath(env.path).fields[field.substring(1)]
+        env.path = env.path.slice(0, env.path.length - 1)
+
+      console.log(JSON.stringify(env))
       return env
 
     # Sets a field in the node to the value indicated.
@@ -21,28 +63,24 @@
     set: (values, env) ->
       field = values[0]
       value = values[1]
-      console.log(env.store)
+
+      if field.charAt(0) == fieldStarter and valueStarter.includes(value.charAt(0))
+        actualValue = 0
+        if value.charAt(0) == storeChar
+          actualValue = env.store
+        else if value.charAt(0) == fieldStarter
+          actualValue = env.tree.followPath(env.path).fields[value.substring(1)]
+        env.tree.followPath(env.path).fields[field.substring(1)] = actualValue
+
+      console.log(JSON.stringify(env))
       return env
-
-    # Stores a field into memory.
-    # Expects 1 parameters, a field.
-    store: (values, env) ->
-      field = values[0]
-      env.store = field
-      return env
-
-  # This represents a virtual node in the Inject.ion network.
-  class Node
-    constructor: (@name, @fields, @linksTo) ->
-
-    displayName: ->
-      console.log(@name)
 
   # This creates a rudimentary environment for the Inject.ion code.
   class InjectionRunner
     env = {
       store: 0
       line: 0
+      path: []
       tree: null
     }
 
@@ -60,6 +98,5 @@
   $('#injection_run').click (event) ->
     event.preventDefault()
     runner = new InjectionRunner $('#injection_code').val()
-    runner.run('test')
-
+    runner.run(network)
 ) jQuery
