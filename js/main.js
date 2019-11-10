@@ -502,6 +502,10 @@
       event.preventDefault();
       return $('#reference_manual').fadeIn(500);
     });
+    $('#close_manual').click(function(event) {
+      event.preventDefault();
+      return $('#reference_manual').fadeOut(500);
+    });
     // On init:
     return rebalanceLines();
   })(jQuery);

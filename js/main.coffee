@@ -425,6 +425,10 @@
     event.preventDefault()
     $('#reference_manual').fadeIn(500)
 
+  $('#close_manual').click (event) ->
+    event.preventDefault()
+    $('#reference_manual').fadeOut(500)
+
   # On init:
   rebalanceLines()
 ) jQuery

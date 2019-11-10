@@ -199,9 +199,33 @@ html, body {
   width: 100%;
   height: 100%;
 
+  box-sizing: border-box;
+
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
   background-color: #DDDDDD;
 }
 
-#reference_manual > * {
+#reference_manual h1, h2, h3 {
   font-family: 'Fira Code', monospace;
+  text-align: center
+}
+
+#reference_manual p {
+  font-family: 'Fira Code', monospace;
+}
+
+#ref_divider {
+  display: flex;
+}
+
+#ref_page_1 {
+  width: 50%;
+}
+
+#ref_page_2 {
+  width: 50%;
 }
