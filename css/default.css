@@ -107,7 +107,14 @@ html, body {
 }
 
 #main_sidebar > button {
+  background-color: #FFB8DA;
+  border-radius: 10px;
+  border: 0;
+
+  margin-bottom: 5px;
+
   font-family: 'Fira Code', monospace;
+  font-size: 1.2em;
 }
 
 /* ----- VIEW ----- */
@@ -230,4 +237,17 @@ html, body {
 
 #ref_page_2 {
   width: 50%;
+}
+
+#close_manual {
+  background-color: #AAAAAA;
+  border-radius: 10px;
+  border: 0;
+
+  font-family: 'Fira Code', monospace;
+  font-size: 1.2em;
+}
+
+#closing_statement {
+  color: #FF3797;
 }

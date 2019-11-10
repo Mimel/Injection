@@ -53,6 +53,8 @@
           <p>Field: #[string] (e.g. #cache)</p>
           <p>Value: [store | field]</p>
           <p>Comparator: [! | = | < | >] ('not equal to', 'equal to', 'less than', and 'greater than', respectively)</p>
+          <h2>Servers</h2>
+          <p>Servers are devices that have a port on the end, represented by a colon followed by a port number. In order to inject into a server, the value parameter you pass must exactly equal to its port number. Otherwise, the inject command fails. You may freely inject out of a server, or return to or from a server.</p>
           <h2>Connection Commands</h2>
           <h3><u>Inject</u></h3>
           <p>Syntax: 'inject [device] [value]'</p>
@@ -86,6 +88,11 @@
           <h3><u>Skip</u></h3>
           <p>Syntax: 'skip [value] [comparator] [value] [integer]'</p>
           <p>Skips a number of lines after this statement equal to [integer] if the conditional ([value] [comparator] [value]) is true.</p>
+          <h2>Advanced Tips</h2>
+          <p>All commands will fail when a faulty field name is given. Use this to your advantage!</p>
+          <p>Sometimes, you just need an infinite loop. 'jump $ = $ [string]' is a reliable way of producing one, provided you have a marker!</p>
+          <p>Use a jump and a skip in tandem to make conditional statements! A comparison that may be invalid on one device may be valid on another.</p>
+          <br /><p id='closing_statement'>Made with love for Hack K-State 2019! -Matty</p>
         </div>
       </div>
       <button id='close_manual' type='button'>Close Reference Manual</button>

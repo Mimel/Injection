@@ -34,8 +34,6 @@
       # Compare all fields.
       for field of @fields
         if @fields.hasOwnProperty(field)
-          console.log(@fields[field])
-          console.log(node.fields[field])
           if @fields[field] != node.fields[field]
             return false
 
@@ -74,7 +72,7 @@
         if link? and (link.port == -999 or compValue == link.port)
           env.path.push(node.substring(1))
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Returns to the node's parrent, carrying the value of the field indicated and setting it into store.
@@ -96,7 +94,7 @@
             return env
 
         env.path = env.path.slice(0, env.path.length - 1)
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Sets a field in the node to the value indicated.
@@ -121,7 +119,7 @@
             return env
         env.tree.followPath(env.path).fields[field.substring(1)] = actualValue
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Adds a field to store.
@@ -135,7 +133,7 @@
         if compValue?
           env.store += env.tree.followPath(env.path).fields[field.substring(1)]
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Subtracts a field from store.
@@ -149,7 +147,7 @@
         if compValue?
           env.store -= env.tree.followPath(env.path).fields[field.substring(1)]
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Inverts store.
@@ -158,7 +156,7 @@
     invert: (values, env) ->
       env.store = -env.store
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Marks a jumping point.
@@ -170,7 +168,7 @@
       if !string.match(/[^A-Z]/i)?
         env.marks[string] = env.line
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Jumps to a marked point.
@@ -210,7 +208,7 @@
       if outcome and !jumpDestination.match(/[^A-Z]/i)?
         env.line = env.marks[jumpDestination]
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
     # Skips a number of lines.
@@ -251,7 +249,7 @@
         env.line += parseInt(skips)
 
 
-      console.log(JSON.stringify(env))
+      #console.log(JSON.stringify(env))
       return env
 
   # Forgive me, codemasters, but I need to insert the view into this model class, just this once.
@@ -451,8 +449,6 @@
 
     currentRunner.eraseAll()
     network = starter.copy()
-    console.log(network)
-    console.log(starter)
     currentRunner.load(null, network)
 
     $('#injection_run_line').prop('disabled', false)
@@ -468,8 +464,6 @@
 
     currentRunner.eraseAll()
     network = starter.copy()
-    console.log(network)
-    console.log(starter)
     currentRunner.load(null, network)
 
     $('#injection_run_line').prop('disabled', false)

@@ -1,0 +1,16 @@
+mark a
+add #cache
+inject @nemesis $
+skip #stopcode = $ 1
+jump $ = $ a
+mark b
+return nemesis $
+inject @eris $
+add #XFF
+return $
+inject @thanatos $
+skip #pass = #pass 1
+jump $ = $ b
+return #pass
+return $
+set #cache $

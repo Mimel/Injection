@@ -50,8 +50,6 @@
 // Compare all fields.
         for (field in this.fields) {
           if (this.fields.hasOwnProperty(field)) {
-            console.log(this.fields[field]);
-            console.log(node.fields[field]);
             if (this.fields[field] !== node.fields[field]) {
               return false;
             }
@@ -98,7 +96,7 @@
             env.path.push(node.substring(1));
           }
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Returns to the node's parrent, carrying the value of the field indicated and setting it into store.
@@ -121,7 +119,7 @@
           }
           env.path = env.path.slice(0, env.path.length - 1);
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Sets a field in the node to the value indicated.
@@ -147,7 +145,7 @@
           }
           env.tree.followPath(env.path).fields[field.substring(1)] = actualValue;
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Adds a field to store.
@@ -162,7 +160,7 @@
             env.store += env.tree.followPath(env.path).fields[field.substring(1)];
           }
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Subtracts a field from store.
@@ -177,7 +175,7 @@
             env.store -= env.tree.followPath(env.path).fields[field.substring(1)];
           }
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Inverts store.
@@ -185,7 +183,7 @@
       // Validated.
       invert: function(values, env) {
         env.store = -env.store;
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Marks a jumping point.
@@ -197,7 +195,7 @@
         if (string.match(/[^A-Z]/i) == null) {
           env.marks[string] = env.line;
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Jumps to a marked point.
@@ -247,7 +245,7 @@
         if (outcome && (jumpDestination.match(/[^A-Z]/i) == null)) {
           env.line = env.marks[jumpDestination];
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       },
       // Skips a number of lines.
@@ -297,7 +295,7 @@
         if (outcome && (skips.match(/[^0-9]/i) == null)) {
           env.line += parseInt(skips);
         }
-        console.log(JSON.stringify(env));
+        //console.log(JSON.stringify(env))
         return env;
       }
     };
@@ -534,8 +532,6 @@
       loadJSON('levels/' + event.target.id + '.json');
       currentRunner.eraseAll();
       network = starter.copy();
-      console.log(network);
-      console.log(starter);
       currentRunner.load(null, network);
       $('#injection_run_line').prop('disabled', false);
       $('#injection_run_all').prop('disabled', false);
@@ -548,8 +544,6 @@
       $('#line' + currentRunner.env().line).css('background-color', 'transparent');
       currentRunner.eraseAll();
       network = starter.copy();
-      console.log(network);
-      console.log(starter);
       currentRunner.load(null, network);
       $('#injection_run_line').prop('disabled', false);
       $('#injection_run_all').prop('disabled', false);

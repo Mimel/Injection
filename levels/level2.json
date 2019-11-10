@@ -24,6 +24,7 @@
           "xanthe": {
             "name": "xanthe:47",
             "type": "server",
+            "port": 47,
             "fields": {
               "lockbox": 623281990
             },
@@ -61,6 +62,7 @@
           "xanthe": {
             "name": "xanthe:47",
             "type": "server",
+            "port": 47,
             "fields": {
               "lockbox": 623281990
             },
