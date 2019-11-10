@@ -22,7 +22,7 @@
         },
         "linksTo": {
           "xanthe": {
-            "name": "xanthe:47",
+            "name": "xanthe",
             "type": "server",
             "port": 47,
             "fields": {
@@ -60,7 +60,7 @@
         },
         "linksTo": {
           "xanthe": {
-            "name": "xanthe:47",
+            "name": "xanthe",
             "type": "server",
             "port": 47,
             "fields": {

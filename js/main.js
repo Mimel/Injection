@@ -93,6 +93,7 @@
           // Check for ports.
           link = env.tree.followPath(env.path).linksTo[node.substring(1)];
           if ((link != null) && (link.port === -999 || compValue === link.port)) {
+            env.store = compValue;
             env.path.push(node.substring(1));
           }
         }

@@ -66,10 +66,10 @@
             return env
         else
           compValue = env.store
-
         # Check for ports.
         link = env.tree.followPath(env.path).linksTo[node.substring(1)]
         if link? and (link.port == -999 or compValue == link.port)
+          env.store = compValue
           env.path.push(node.substring(1))
 
       #console.log(JSON.stringify(env))
