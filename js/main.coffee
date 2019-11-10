@@ -2,8 +2,8 @@
   nodeStarter = '@'
   fieldStarter = '#'
   storeChar = '$'
-  nullChar = '~'
-  valueStarter = [fieldStarter, storeChar, nullChar]
+  valueStarter = [fieldStarter, storeChar]
+  commentChar = '%'
 
   # This represents a virtual node in the Inject.ion network.
   class Node
@@ -122,6 +122,11 @@
     # Marks a jumping point.
     # Expects 1 parameter, a string.
     mark: (values, env) ->
+      string = values[0]
+
+      if !string.match(/[^A-Z]/i)?
+        env.marks[string] = env.line
+
       console.log(JSON.stringify(env))
       return env
 
@@ -246,6 +251,7 @@
   class InjectionRunner
     env = {
       store: 0
+      marks: {}
       line: 0
       path: []
       tree: null
@@ -259,6 +265,7 @@
 
     eraseAll: ->
       env.store = 0
+      env.marks = {}
       env.line = 0
       env.path = []
       env.tree = null
@@ -287,8 +294,7 @@
     redraw: ->
       redraw(env.tree, env.path, env.store)
 
-  # Adjusts line numbers.
-  $('#injection_code').bind('input', (event) ->
+  rebalanceLines = () ->
     numNewLines = 1
     for character in $('#injection_code').val()
       if character == '\n'
@@ -296,10 +302,19 @@
 
     if numNewLines > $('.line_num').length
       while $('.line_num').length < numNewLines
-        $('#line_numbers').append('<li class=\'line_num\'>' + ($('.line_num').length + 1) + '</li>')
+        $('#line_numbers').append('<li class=\'line_num\' id=\'line' + ($('.line_num').length + 1) + '\'>' + ($('.line_num').length + 1) + '</li>')
     else if numNewLines < $('.line_num').length
       while $('.line_num').length > numNewLines
         $('#line_numbers > li').last().remove()
+
+  highlightLine = (prev, curr) ->
+    if prev?
+      $('#line' + prev).css('background-color', 'transparent')
+    $('#line' + curr).css('background-color', '#FFB8DA')
+
+  # Adjusts line numbers.
+  $('#injection_code').bind('input', (event) ->
+    rebalanceLines()
   )
 
   # Selects a new level.
@@ -310,6 +325,8 @@
     $('#injection_code').prop('disabled', false)
 
   $('#injection_reset_env').click (event) ->
+    $('#line' + currentRunner.env().line).css('background-color', 'transparent')
+    
     currentRunner.eraseAll()
     network = starter.copy()
     console.log(network)
@@ -324,12 +341,15 @@
 
   $('#injection_run_line').click (event) ->
     event.preventDefault()
+    prevLine = null
     $('#injection_run_all').prop('disabled', true)
     $('#injection_code').prop('disabled', true)
     if currentRunner.isEmpty()
       currentRunner.load($('#injection_code').val(), network)
+    else
+      prevLine = currentRunner.env().line
     currentRunner.runNext()
-
+    highlightLine(prevLine, currentRunner.env().line)
 
   $('#injection_run_all').click (event) ->
     event.preventDefault()
@@ -339,5 +359,8 @@
     currentRunner.load($('#injection_code').val(), network)
     currentRunner.runAll()
     if network.checkAgainst(goal)
-      $('#win_confirm').fadeIn(300)
+      $('#win_container').fadeIn(300)
+
+  # On init:
+  rebalanceLines()
 ) jQuery

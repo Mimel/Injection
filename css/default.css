@@ -172,11 +172,17 @@ html, body {
   box-shadow: inset 3px 3px 10px 10px rgba(55, 55, 55, 0.3);
 }
 
-#win_confirm {
+#win_container {
   display: none;
   position: fixed;
   bottom: 50px;
   right: 50px;
 
-  background-color: #333333;
+  width: 100px;
+  height: 100px;
+}
+
+#win_confirm {
+  width: 100px;
+  height: 100px;
 }
