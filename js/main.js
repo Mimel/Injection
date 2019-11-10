@@ -158,6 +158,80 @@
       // Jumps to a marked point.
       // Expects two parameters, a conditional, and a string.
       jump: function(values, env) {
+        var comparison, jumpDestination, leftComparator, outcome, rightComparator;
+        leftComparator = values[0];
+        comparison = values[1];
+        rightComparator = values[2];
+        jumpDestination = values[3];
+        if (valueStarter.includes(leftComparator.charAt(0)) && valueStarter.includes(rightComparator.charAt(0))) {
+          if (leftComparator.charAt(0) === fieldStarter) {
+            leftComparator = env.tree.followPath(env.path).fields[leftComparator.substring(1)];
+          } else {
+            leftComparator = env.store;
+          }
+          if (rightComparator.charAt(0) === fieldStarter) {
+            rightComparator = env.tree.followPath(env.path).fields[rightComparator.substring(1)];
+          } else {
+            rightComparator = env.store;
+          }
+        }
+        outcome = false;
+        switch (comparison) {
+          case '!':
+            outcome = leftComparator !== rightComparator;
+            break;
+          case '=':
+            outcome = leftComparator === rightComparator;
+            break;
+          case '>':
+            outcome = leftComparator > rightComparator;
+            break;
+          case '<':
+            outcome = leftComparator < rightComparator;
+        }
+        if (outcome && (jumpDestination.match(/[^A-Z]/i) == null)) {
+          env.line = env.marks[jumpDestination];
+        }
+        console.log(JSON.stringify(env));
+        return env;
+      },
+      // Skips a number of lines.
+      // Expects two parameters, a conditional, and an integer.
+      skip: function(values, env) {
+        var comparison, leftComparator, outcome, rightComparator, skips;
+        leftComparator = values[0];
+        comparison = values[1];
+        rightComparator = values[2];
+        skips = values[3];
+        if (valueStarter.includes(leftComparator.charAt(0)) && valueStarter.includes(rightComparator.charAt(0))) {
+          if (leftComparator.charAt(0) === fieldStarter) {
+            leftComparator = env.tree.followPath(env.path).fields[leftComparator.substring(1)];
+          } else {
+            leftComparator = env.store;
+          }
+          if (rightComparator.charAt(0) === fieldStarter) {
+            rightComparator = env.tree.followPath(env.path).fields[rightComparator.substring(1)];
+          } else {
+            rightComparator = env.store;
+          }
+        }
+        outcome = false;
+        switch (comparison) {
+          case '!':
+            outcome = leftComparator !== rightComparator;
+            break;
+          case '=':
+            outcome = leftComparator === rightComparator;
+            break;
+          case '>':
+            outcome = leftComparator > rightComparator;
+            break;
+          case '<':
+            outcome = leftComparator < rightComparator;
+        }
+        if (outcome && (skips.match(/[^0-9]/i) == null)) {
+          env.line += parseInt(skips);
+        }
         console.log(JSON.stringify(env));
         return env;
       }

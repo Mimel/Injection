@@ -133,6 +133,65 @@
     # Jumps to a marked point.
     # Expects two parameters, a conditional, and a string.
     jump: (values, env) ->
+      leftComparator = values[0]
+      comparison = values[1]
+      rightComparator = values[2]
+      jumpDestination = values[3]
+
+      if valueStarter.includes(leftComparator.charAt(0)) and valueStarter.includes(rightComparator.charAt(0))
+        if leftComparator.charAt(0) == fieldStarter
+          leftComparator = env.tree.followPath(env.path).fields[leftComparator.substring(1)]
+        else
+          leftComparator = env.store
+
+        if rightComparator.charAt(0) == fieldStarter
+          rightComparator = env.tree.followPath(env.path).fields[rightComparator.substring(1)]
+        else
+          rightComparator = env.store
+
+      outcome = false
+      switch comparison
+        when '!' then outcome = (leftComparator != rightComparator)
+        when '=' then outcome = (leftComparator == rightComparator)
+        when '>' then outcome = (leftComparator > rightComparator)
+        when '<' then outcome = (leftComparator < rightComparator)
+
+      if outcome and !jumpDestination.match(/[^A-Z]/i)?
+        env.line = env.marks[jumpDestination]
+
+      console.log(JSON.stringify(env))
+      return env
+
+    # Skips a number of lines.
+    # Expects two parameters, a conditional, and an integer.
+    skip: (values, env) ->
+      leftComparator = values[0]
+      comparison = values[1]
+      rightComparator = values[2]
+      skips = values[3]
+
+      if valueStarter.includes(leftComparator.charAt(0)) and valueStarter.includes(rightComparator.charAt(0))
+        if leftComparator.charAt(0) == fieldStarter
+          leftComparator = env.tree.followPath(env.path).fields[leftComparator.substring(1)]
+        else
+          leftComparator = env.store
+
+        if rightComparator.charAt(0) == fieldStarter
+          rightComparator = env.tree.followPath(env.path).fields[rightComparator.substring(1)]
+        else
+          rightComparator = env.store
+
+      outcome = false
+      switch comparison
+        when '!' then outcome = (leftComparator != rightComparator)
+        when '=' then outcome = (leftComparator == rightComparator)
+        when '>' then outcome = (leftComparator > rightComparator)
+        when '<' then outcome = (leftComparator < rightComparator)
+
+      if outcome and !skips.match(/[^0-9]/i)?
+        env.line += parseInt(skips)
+
+
       console.log(JSON.stringify(env))
       return env
 
@@ -326,7 +385,7 @@
 
   $('#injection_reset_env').click (event) ->
     $('#line' + currentRunner.env().line).css('background-color', 'transparent')
-    
+
     currentRunner.eraseAll()
     network = starter.copy()
     console.log(network)
