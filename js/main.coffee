@@ -3,7 +3,6 @@
   fieldStarter = '#'
   storeChar = '$'
   nullChar = '~'
-  # '$' refers to the store value; '~' refers to NULL.
   valueStarter = [fieldStarter, storeChar, nullChar]
 
   # This represents a virtual node in the Inject.ion network.
@@ -29,7 +28,6 @@
 
     # No validation for disparate trees.
     checkAgainst: (node) ->
-
       # Compare all fields.
       for field of @fields
         if @fields.hasOwnProperty(field)
@@ -113,6 +111,25 @@
       console.log(JSON.stringify(env))
       return env
 
+    # Inverts store.
+    # Expects 0 parameters.
+    invert: (values, env) ->
+      env.store = -env.store
+
+      console.log(JSON.stringify(env))
+      return env
+
+    # Marks a jumping point.
+    # Expects 1 parameter, a string.
+    mark: (values, env) ->
+      console.log(JSON.stringify(env))
+      return env
+
+    # Jumps to a marked point.
+    # Expects two parameters, a conditional, and a string.
+    jump: (values, env) ->
+      console.log(JSON.stringify(env))
+      return env
 
   # Forgive me, codemasters, but I need to insert the view into this model class, just this once.
 
@@ -126,9 +143,8 @@
   network = null
   currentRunner = null
 
-  iconSpriteSheet = new Image()
-  iconSpriteSheet.onload = ->
-    $.getJSON('https://api.myjson.com/bins/gz2he').done (data) ->
+  loadJSON = (file) ->
+    $.getJSON(file).done (data) ->
       starter = data.startingTree
       goal = data.completeTree
       mission = data.mission
@@ -140,7 +156,11 @@
 
       currentRunner = new InjectionRunner
       currentRunner.load(null, network)
-      redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50)
+      redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store)
+
+  iconSpriteSheet = new Image()
+  iconSpriteSheet.onload = ->
+    loadJSON('https://api.myjson.com/bins/gz2he')
   iconSpriteSheet.src = 'img/icon_spritesheet.png'
 
   # Distance in pixels between a node and its children.
@@ -202,24 +222,23 @@
           renderView(node.linksTo[child], path, store, end_x, end_y, new_s_range, new_e_range)
           currentChild += 1
 
-  redraw = (node, path, store, x, y) ->
+  redraw = (node, path, store) ->
     ctxt.clearRect(0, 0, canvas.width, canvas.height)
 
-
     if path.length == 0
-      renderView(node, [node.name], store, x, y, 0, 90)
+      renderView(node, [node.name], store, 50, 50, 0, 90)
     else
-      renderView(node, path, store, x, y, 0, 90)
+      renderView(node, path, store, 50, 50, 0, 90)
 
   # Adjust canvas bounds on resize, and redraw contents.
   window.addEventListener 'resize', (event) ->
     ctxt.canvas.width = window.innerWidth - 325
-    ctxt.canvas.height = window.innerHeight - 100
-    redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50)
+    ctxt.canvas.height = window.innerHeight - 50
+    redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store)
 
   # Set canvas bounds.
   ctxt.canvas.width = window.innerWidth - 325
-  ctxt.canvas.height = window.innerHeight - 100
+  ctxt.canvas.height = window.innerHeight - 50
 
   # End View, resume Model.
 
@@ -263,10 +282,10 @@
     runLine = (line) ->
       lexemes = line.split(' ')
       env = commandDictionary[lexemes[0]](lexemes.slice(1), env)
-      redraw(env.tree, env.path, env.store, 50, 50)
+      redraw(env.tree, env.path, env.store)
 
     redraw: ->
-      redraw(env.tree, env.path, env.store, 50, 50)
+      redraw(env.tree, env.path, env.store)
 
   # Adjusts line numbers.
   $('#injection_code').bind('input', (event) ->
@@ -285,19 +304,10 @@
 
   # Selects a new level.
   $('.level').click (event) ->
-    $.getJSON('https://api.myjson.com/bins/pv2jm').done (data) ->
-      starter = data.startingTree
-      goal = data.completeTree
-      mission = data.mission
-
-      starter = new Node starter.name, starter.type, starter.fields, starter.linksTo
-      network = starter.copy()
-
-      $('#mission_text').text(mission)
-
-      currentRunner = new InjectionRunner
-      currentRunner.load(null, network)
-      redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store, 50, 50)
+    loadJSON('https://api.myjson.com/bins/pv2jm')
+    $('#injection_run_line').prop('disabled', false)
+    $('#injection_run_all').prop('disabled', false)
+    $('#injection_code').prop('disabled', false)
 
   $('#injection_reset_env').click (event) ->
     currentRunner.eraseAll()
@@ -305,16 +315,27 @@
     console.log(network)
     console.log(starter)
     currentRunner.load(null, network)
+
+    $('#injection_run_line').prop('disabled', false)
+    $('#injection_run_all').prop('disabled', false)
+    $('#injection_code').prop('disabled', false)
+
     currentRunner.redraw()
 
   $('#injection_run_line').click (event) ->
     event.preventDefault()
+    $('#injection_run_all').prop('disabled', true)
+    $('#injection_code').prop('disabled', true)
     if currentRunner.isEmpty()
       currentRunner.load($('#injection_code').val(), network)
     currentRunner.runNext()
 
+
   $('#injection_run_all').click (event) ->
     event.preventDefault()
+    $('#injection_run_line').prop('disabled', true)
+    $('#injection_run_all').prop('disabled', true)
+    $('#injection_code').prop('disabled', true)
     currentRunner.load($('#injection_code').val(), network)
     currentRunner.runAll()
     if network.checkAgainst(goal)
