@@ -318,16 +318,20 @@
         starter = new Node(starter.name, starter.type, starter.fields, starter.linksTo, starter.port);
         network = starter.copy();
         $('#mission_text').text(mission);
-        currentRunner = new InjectionRunner;
+        if (currentRunner != null) {
+          currentRunner.eraseAll();
+        } else {
+          currentRunner = new InjectionRunner;
+        }
         currentRunner.load(null, network);
         return redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store);
       });
     };
     iconSpriteSheet = new Image();
     iconSpriteSheet.onload = function() {
-      return loadJSON('https://api.myjson.com/bins/p4a1e');
+      //loadJSON('https://api.myjson.com/bins/p4a1e')
+      return loadJSON('levels/level1.json');
     };
-    //loadJSON('levels/level1.json')
     iconSpriteSheet.src = 'img/icon_spritesheet.png';
     // Distance in pixels between a node and its children.
     nodeChildrenDistance = 300;
@@ -526,10 +530,18 @@
     // Selects a new level.
     $('.level').click(function(event) {
       //loadJSON('https://api.myjson.com/bins/pv2jm')
+      $('#line' + currentRunner.env().line).css('background-color', 'transparent');
       loadJSON('levels/' + event.target.id + '.json');
+      currentRunner.eraseAll();
+      network = starter.copy();
+      console.log(network);
+      console.log(starter);
+      currentRunner.load(null, network);
       $('#injection_run_line').prop('disabled', false);
       $('#injection_run_all').prop('disabled', false);
-      return $('#injection_code').prop('disabled', false);
+      $('#injection_code').prop('disabled', false);
+      $('#win_container').fadeOut(300);
+      return currentRunner.redraw();
     });
     $('#injection_reset_env').click(function(event) {
       event.preventDefault();
@@ -542,6 +554,7 @@
       $('#injection_run_line').prop('disabled', false);
       $('#injection_run_all').prop('disabled', false);
       $('#injection_code').prop('disabled', false);
+      $('#win_container').fadeOut(300);
       return currentRunner.redraw();
     });
     $('#injection_run_line').click(function(event) {

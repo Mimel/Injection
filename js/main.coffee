@@ -277,14 +277,18 @@
 
       $('#mission_text').text(mission)
 
-      currentRunner = new InjectionRunner
+      if currentRunner?
+        currentRunner.eraseAll()
+      else
+        currentRunner = new InjectionRunner
+
       currentRunner.load(null, network)
       redraw(currentRunner.env().tree, currentRunner.env().path, currentRunner.env().store)
 
   iconSpriteSheet = new Image()
   iconSpriteSheet.onload = ->
-    loadJSON('https://api.myjson.com/bins/p4a1e')
-    #loadJSON('levels/level1.json')
+    #loadJSON('https://api.myjson.com/bins/p4a1e')
+    loadJSON('levels/level1.json')
   iconSpriteSheet.src = 'img/icon_spritesheet.png'
 
   # Distance in pixels between a node and its children.
@@ -442,10 +446,21 @@
   # Selects a new level.
   $('.level').click (event) ->
     #loadJSON('https://api.myjson.com/bins/pv2jm')
+    $('#line' + currentRunner.env().line).css('background-color', 'transparent')
     loadJSON('levels/' + event.target.id + '.json')
+
+    currentRunner.eraseAll()
+    network = starter.copy()
+    console.log(network)
+    console.log(starter)
+    currentRunner.load(null, network)
+
     $('#injection_run_line').prop('disabled', false)
     $('#injection_run_all').prop('disabled', false)
     $('#injection_code').prop('disabled', false)
+    $('#win_container').fadeOut(300)
+
+    currentRunner.redraw()
 
   $('#injection_reset_env').click (event) ->
     event.preventDefault()
@@ -460,6 +475,7 @@
     $('#injection_run_line').prop('disabled', false)
     $('#injection_run_all').prop('disabled', false)
     $('#injection_code').prop('disabled', false)
+    $('#win_container').fadeOut(300)
 
     currentRunner.redraw()
 
