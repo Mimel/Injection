@@ -1,6 +1,6 @@
 {
   "startingTree": {
-    "name": "valkyrie",
+    "name": "persephone",
     "type": "console",
     "fields": {
       "cache": 0
@@ -10,7 +10,7 @@
         "name": "idyia",
         "type": "computer",
         "fields": {
-          "heat": 340
+          "key": 89
         },
         "linksTo": {}
       },
@@ -18,14 +18,14 @@
         "name": "metis",
         "type": "computer",
         "fields": {
-          "heat": 170
+          "key": 42
         },
         "linksTo": {
           "xanthe": {
-            "name": "xanthe",
+            "name": "xanthe:47",
             "type": "server",
             "fields": {
-              "lockbox": 623281
+              "lockbox": 623281990
             },
             "linksTo": {
 
@@ -37,17 +37,17 @@
   },
 
   "completeTree": {
-    "name": "valkyrie",
+    "name": "persephone",
     "type": "console",
     "fields": {
-      "cache": 623281
+      "cache": 623281990
     },
     "linksTo": {
       "idyia": {
         "name": "idyia",
         "type": "computer",
         "fields": {
-          "heat": 340
+          "key": 89
         },
         "linksTo": {}
       },
@@ -55,14 +55,14 @@
         "name": "metis",
         "type": "computer",
         "fields": {
-          "heat": 170
+          "key": 42
         },
         "linksTo": {
           "xanthe": {
-            "name": "xanthe",
+            "name": "xanthe:47",
             "type": "server",
             "fields": {
-              "lockbox": 623281
+              "lockbox": 623281990
             },
             "linksTo": {
 

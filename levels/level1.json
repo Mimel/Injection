@@ -1,6 +1,6 @@
 {
   "startingTree": {
-    "name": "valkyrie",
+    "name": "persephone",
     "type": "console",
     "fields": {
       "cache": 808
@@ -10,7 +10,7 @@
         "name": "scylla",
         "type": "computer",
         "fields": {
-          "xrm": 303
+          "VRLC": 303
         },
         "linksTo": {}
       },
@@ -18,7 +18,7 @@
         "name": "charybdis",
         "type": "computer",
         "fields": {
-          "xrm": 303
+          "VRLC": 303
         },
         "linksTo": {}
       }
@@ -26,7 +26,7 @@
   },
 
   "completeTree": {
-    "name": "valkyrie",
+    "name": "persephone",
     "type": "console",
     "fields": {
       "cache": 808
@@ -36,7 +36,7 @@
         "name": "scylla",
         "type": "computer",
         "fields": {
-          "xrm": 808
+          "VRLC": 808
         },
         "linksTo": {}
       },
@@ -44,12 +44,12 @@
         "name": "charybdis",
         "type": "computer",
         "fields": {
-          "xrm": 808
+          "VRLC": 808
         },
         "linksTo": {}
       }
     }
   },
 
-  "mission": "Set both Charybdis' and Scylla's XRMs to the value in your cache."
+  "mission": "Set both Charybdis' and Scylla's XRMs to the value in your cache. Do not alter your cache."
 }

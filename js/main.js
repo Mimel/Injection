@@ -9,15 +9,19 @@
     commentChar = '%';
     // This represents a virtual node in the Inject.ion network.
     Node = class Node {
-      constructor(name, type, fields, links) {
+      constructor(name, type, fields, links, port = -999) {
         var child;
         this.name = name;
         this.type = type;
         this.fields = fields;
+        this.port = port;
+        if (this.port == null) {
+          this.port = -999;
+        }
         this.linksTo = {};
         for (child in links) {
           if (links.hasOwnProperty(child)) {
-            this.linksTo[child] = new Node(links[child].name, links[child].type, links[child].fields, links[child].linksTo);
+            this.linksTo[child] = new Node(links[child].name, links[child].type, links[child].fields, links[child].linksTo, links[child].port);
           }
         }
       }
@@ -27,7 +31,7 @@
         // Retrieved from Michael Jasper's answer,
         // From https://stackoverflow.com/questions/5364650/cloning-an-object-in-javascript
         deepCopy = JSON.parse(JSON.stringify(this));
-        return new Node(deepCopy.name, deepCopy.type, deepCopy.fields, deepCopy.linksTo);
+        return new Node(deepCopy.name, deepCopy.type, deepCopy.fields, deepCopy.linksTo, deepCopy.port);
       }
 
       followPath(path) {
@@ -70,15 +74,27 @@
       // Goes to the following node, carrying a value.
       // Expects 2 parameters, a node, and a value.
       inject: function(values, env) {
-        var node, value;
+        var compValue, field, link, node, value;
         node = values[0];
         value = values[1];
         // '$' and '~' will do nothing.
         if (node.charAt(0) === nodeStarter && valueStarter.includes(value.charAt(0))) {
+          // Validation; function does nothing if field is invalid.
+          compValue = 0;
           if (value.charAt(0) === fieldStarter) {
-            env.store = env.tree.followPath(env.path).fields[value.substring(1)];
+            field = env.tree.followPath(env.path).fields[value.substring(1)];
+            if (field != null) {
+              compValue = field;
+            } else {
+              return env;
+            }
+          } else {
+            compValue = env.store;
           }
-          env.path.push(node.substring(1));
+          link = env.tree.followPath(env.path).linksTo[node.substring(1)];
+          if ((link != null) && (link.port === -999 || compValue === link.port)) {
+            env.path.push(node.substring(1));
+          }
         }
         console.log(JSON.stringify(env));
         return env;
@@ -86,11 +102,14 @@
       // Returns to the node's parrent, carrying the value of the field indicated and setting it into store.
       // Expects 1 parameter, a value.
       return: function(values, env) {
-        var value;
+        var assign, value;
         value = values[0];
         if (valueStarter.includes(value.charAt(0))) {
           if (value.charAt(0) === fieldStarter) {
-            env.store = env.tree.followPath(env.path).fields[value.substring(1)];
+            assign = env.tree.followPath(env.path).fields[value.substring(1)];
+            if (assign != null) {
+              env.store = assign;
+            }
           }
           env.path = env.path.slice(0, env.path.length - 1);
         }
@@ -250,7 +269,7 @@
         starter = data.startingTree;
         goal = data.completeTree;
         mission = data.mission;
-        starter = new Node(starter.name, starter.type, starter.fields, starter.linksTo);
+        starter = new Node(starter.name, starter.type, starter.fields, starter.linksTo, starter.port);
         network = starter.copy();
         $('#mission_text').text(mission);
         currentRunner = new InjectionRunner;
@@ -260,8 +279,9 @@
     };
     iconSpriteSheet = new Image();
     iconSpriteSheet.onload = function() {
-      return loadJSON('https://api.myjson.com/bins/gz2he');
+      return loadJSON('https://api.myjson.com/bins/p4a1e');
     };
+    //loadJSON('levels/level1.json')
     iconSpriteSheet.src = 'img/icon_spritesheet.png';
     // Distance in pixels between a node and its children.
     nodeChildrenDistance = 300;
@@ -455,7 +475,8 @@
     });
     // Selects a new level.
     $('.level').click(function(event) {
-      loadJSON('https://api.myjson.com/bins/pv2jm');
+      //loadJSON('https://api.myjson.com/bins/pv2jm')
+      loadJSON('levels/' + event.target.id + '.json');
       $('#injection_run_line').prop('disabled', false);
       $('#injection_run_all').prop('disabled', false);
       return $('#injection_code').prop('disabled', false);

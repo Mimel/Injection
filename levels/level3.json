@@ -1,0 +1,77 @@
+{
+  "startingTree": {
+    "name": "persephone",
+    "type": "console",
+    "fields": {
+      "cache": 2
+    },
+    "linksTo": {
+      "nemesis": {
+        "name": "nemesis",
+        "type": "server",
+        "port": 16,
+        "fields": {
+          "stopcode": 16
+        },
+        "linksTo": {
+          "eris": {
+            "name": "eris",
+            "type": "computer",
+            "fields": {
+              "XFF": 7
+            },
+            "linksTo": {}
+          },
+          "thanatos": {
+            "name": "thanatos",
+            "type": "server",
+            "port": 513,
+            "fields": {
+              "pass": 98024811
+            },
+            "linksTo": {}
+          }
+        }
+      }
+    }
+  },
+
+  "completeTree": {
+    "name": "persephone",
+    "type": "console",
+    "fields": {
+      "cache": 98024811
+    },
+    "linksTo": {
+      "nemesis": {
+        "name": "nemesis",
+        "type": "server",
+        "port": 16,
+        "fields": {
+          "stopcode": 16
+        },
+        "linksTo": {
+          "eris": {
+            "name": "eris",
+            "type": "computer",
+            "fields": {
+              "XFF": 7
+            },
+            "linksTo": {}
+          },
+          "thanatos": {
+            "name": "thanatos",
+            "type": "server",
+            "port": 513,
+            "fields": {
+              "pass": 98024811
+            },
+            "linksTo": {}
+          }
+        }
+      }
+    }
+  },
+
+  "mission": "Store Thanatos' password in your cache without changing anything else."
+}
