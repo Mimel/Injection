@@ -87,10 +87,12 @@
       // Returns to the node's parrent, carrying the value of the field indicated and setting it into store.
       // Expects 1 parameter, a value.
       return: function(values, env) {
-        var field;
-        field = values[0];
-        if (field.charAt(0) === fieldStarter) {
-          env.store = env.tree.followPath(env.path).fields[field.substring(1)];
+        var value;
+        value = values[0];
+        if (valueStarter.includes(value.charAt(0))) {
+          if (value.charAt(0) === fieldStarter) {
+            env.store = env.tree.followPath(env.path).fields[value.substring(1)];
+          }
           env.path = env.path.slice(0, env.path.length - 1);
         }
         console.log(JSON.stringify(env));
@@ -110,6 +112,28 @@
             actualValue = env.tree.followPath(env.path).fields[value.substring(1)];
           }
           env.tree.followPath(env.path).fields[field.substring(1)] = actualValue;
+        }
+        console.log(JSON.stringify(env));
+        return env;
+      },
+      // Adds a field to store.
+      // Expects 1 parameter, a field.
+      add: function(values, env) {
+        var field;
+        field = values[0];
+        if (field.charAt(0) === fieldStarter) {
+          env.store += env.tree.followPath(env.path).fields[field.substring(1)];
+        }
+        console.log(JSON.stringify(env));
+        return env;
+      },
+      // Subtracts a field from store.
+      // Expects 1 parameter, a field.
+      sub: function(values, env) {
+        var field;
+        field = values[0];
+        if (field.charAt(0) === fieldStarter) {
+          env.store -= env.tree.followPath(env.path).fields[field.substring(1)];
         }
         console.log(JSON.stringify(env));
         return env;

@@ -65,11 +65,12 @@
     # Returns to the node's parrent, carrying the value of the field indicated and setting it into store.
     # Expects 1 parameter, a value.
     return: (values, env) ->
-      field = values[0]
-      if field.charAt(0) == fieldStarter
-        env.store = env.tree.followPath(env.path).fields[field.substring(1)]
-        env.path = env.path.slice(0, env.path.length - 1)
+      value = values[0]
 
+      if valueStarter.includes(value.charAt(0))
+        if value.charAt(0) == fieldStarter
+          env.store = env.tree.followPath(env.path).fields[value.substring(1)]
+        env.path = env.path.slice(0, env.path.length - 1)
       console.log(JSON.stringify(env))
       return env
 
@@ -89,6 +90,29 @@
 
       console.log(JSON.stringify(env))
       return env
+
+    # Adds a field to store.
+    # Expects 1 parameter, a field.
+    add: (values, env) ->
+      field = values[0]
+
+      if field.charAt(0) == fieldStarter
+        env.store += env.tree.followPath(env.path).fields[field.substring(1)]
+
+      console.log(JSON.stringify(env))
+      return env
+
+    # Subtracts a field from store.
+    # Expects 1 parameter, a field.
+    sub: (values, env) ->
+      field = values[0]
+
+      if field.charAt(0) == fieldStarter
+        env.store -= env.tree.followPath(env.path).fields[field.substring(1)]
+
+      console.log(JSON.stringify(env))
+      return env
+
 
   # Forgive me, codemasters, but I need to insert the view into this model class, just this once.
 
