@@ -55,25 +55,35 @@
       <h2>Connection Commands</h2>
       <h3>Inject</h3>
       <p>Syntax: 'inject [device] [value]'</p>
+      <p>Transfers control to a connected device, passing a parameter as storage. If the parameter is the store itself, then the store does not change.</p>
       <h3>Return</h3>
       <p>Syntax: 'return [value]'</p>
+      <p>Returns control to the parent of the current device, passing a parameter as storage. If the parameter is the store itself, then the store does not change.</p>
       <h2>Data Manipulation Commands</h2>
       <h3>Set</h3>
       <p>Syntax: 'set [field] [value]'</p>
+      <p>Sets a field in the current device to the value given.</p>
       <h2>Math Commands</h2>
       <h3>Add</h3>
       <p>Syntax: 'add [field]'</p>
+      <p>Adds the value of a given field to the current store.</p>
       <h3>Sub</h3>
       <p>Syntax: 'sub [field]'</p>
+      <p>Subtracts the value of a given field from the current store.</p>
       <h3>Invert</h3>
       <p>Syntax: 'invert'</p>
+      <p>Inverts the current store, switching the value from positive to negative (or vice versa).</p>
       <h2>Program Flow Commands</h2>
       <h3>Mark</h3>
       <p>Syntax: 'mark [string]'</p>
+      <p>Creates a point where the program can jump to, named by the given string.</p>
       <h3>Jump</h3>
       <p>Syntax: 'jump [value] [comparator] [value] [string]'</p>
+      <p>Jumps to the given previously-instantiated marker if the conditional ([value] [comparator] [value]) is true.</p>
       <h3>Skip</h3>
       <p>Syntax: 'skip [value] [comparator] [value] [integer]'</p>
+      <p>Skips a number of lines after this statement equal to [integer] if the conditional ([value] [comparator] [value]) is true.</p>
+      <button id='close_manual' type='button'>Close Reference Manual</button>
     </div>
   </body>
 </html>
