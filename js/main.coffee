@@ -51,6 +51,7 @@
   commandDictionary =
     # Goes to the following node, carrying a value.
     # Expects 2 parameters, a node, and a value.
+    # Validated.
     inject: (values, env) ->
       node = values[0]
       value = values[1]
@@ -78,30 +79,46 @@
 
     # Returns to the node's parrent, carrying the value of the field indicated and setting it into store.
     # Expects 1 parameter, a value.
+    # Validated.
     return: (values, env) ->
       value = values[0]
 
+      if env.path.length == 0
+        return env
+
       if valueStarter.includes(value.charAt(0))
+
         if value.charAt(0) == fieldStarter
-          assign = env.tree.followPath(env.path).fields[value.substring(1)]
-          if assign?
-            env.store = assign
+          compValue = env.tree.followPath(env.path).fields[value.substring(1)]
+          if compValue?
+            env.store = compValue
+          else
+            return env
+
         env.path = env.path.slice(0, env.path.length - 1)
       console.log(JSON.stringify(env))
       return env
 
     # Sets a field in the node to the value indicated.
     # Expects 2 parameters, a field and a value.
+    # Validated.
     set: (values, env) ->
       field = values[0]
       value = values[1]
 
       if field.charAt(0) == fieldStarter and valueStarter.includes(value.charAt(0))
+        # Check if field is valid.
+        if !env.tree.followPath(env.path).fields[field.substring(1)]?
+          return env
+
         actualValue = 0
         if value.charAt(0) == storeChar
           actualValue = env.store
-        else if value.charAt(0) == fieldStarter
-          actualValue = env.tree.followPath(env.path).fields[value.substring(1)]
+        else
+          if env.tree.followPath(env.path).fields[value.substring(1)]?
+            actualValue = env.tree.followPath(env.path).fields[value.substring(1)]
+          else
+            return env
         env.tree.followPath(env.path).fields[field.substring(1)] = actualValue
 
       console.log(JSON.stringify(env))
@@ -109,28 +126,35 @@
 
     # Adds a field to store.
     # Expects 1 parameter, a field.
+    #Validated.
     add: (values, env) ->
       field = values[0]
 
       if field.charAt(0) == fieldStarter
-        env.store += env.tree.followPath(env.path).fields[field.substring(1)]
+        compValue = env.tree.followPath(env.path).fields[field.substring(1)]
+        if compValue?
+          env.store += env.tree.followPath(env.path).fields[field.substring(1)]
 
       console.log(JSON.stringify(env))
       return env
 
     # Subtracts a field from store.
     # Expects 1 parameter, a field.
+    # Validated.
     sub: (values, env) ->
       field = values[0]
 
       if field.charAt(0) == fieldStarter
-        env.store -= env.tree.followPath(env.path).fields[field.substring(1)]
+        compValue = env.tree.followPath(env.path).fields[field.substring(1)]
+        if compValue?
+          env.store -= env.tree.followPath(env.path).fields[field.substring(1)]
 
       console.log(JSON.stringify(env))
       return env
 
     # Inverts store.
     # Expects 0 parameters.
+    # Validated.
     invert: (values, env) ->
       env.store = -env.store
 
@@ -139,6 +163,7 @@
 
     # Marks a jumping point.
     # Expects 1 parameter, a string.
+    # Validated.
     mark: (values, env) ->
       string = values[0]
 
@@ -158,12 +183,20 @@
 
       if valueStarter.includes(leftComparator.charAt(0)) and valueStarter.includes(rightComparator.charAt(0))
         if leftComparator.charAt(0) == fieldStarter
-          leftComparator = env.tree.followPath(env.path).fields[leftComparator.substring(1)]
+          l_comp = env.tree.followPath(env.path).fields[leftComparator.substring(1)]
+          if l_comp?
+            leftComparator = l_comp
+          else
+            return env
         else
           leftComparator = env.store
 
         if rightComparator.charAt(0) == fieldStarter
-          rightComparator = env.tree.followPath(env.path).fields[rightComparator.substring(1)]
+          r_comp = env.tree.followPath(env.path).fields[rightComparator.substring(1)]
+          if r_comp?
+            rightComparator = r_comp
+          else
+            return env
         else
           rightComparator = env.store
 
@@ -190,12 +223,20 @@
 
       if valueStarter.includes(leftComparator.charAt(0)) and valueStarter.includes(rightComparator.charAt(0))
         if leftComparator.charAt(0) == fieldStarter
-          leftComparator = env.tree.followPath(env.path).fields[leftComparator.substring(1)]
+          l_comp = env.tree.followPath(env.path).fields[leftComparator.substring(1)]
+          if l_comp?
+            leftComparator = l_comp
+          else
+            return env
         else
           leftComparator = env.store
 
         if rightComparator.charAt(0) == fieldStarter
-          rightComparator = env.tree.followPath(env.path).fields[rightComparator.substring(1)]
+          r_comp = env.tree.followPath(env.path).fields[rightComparator.substring(1)]
+          if r_comp?
+            rightComparator = r_comp
+          else
+            return env
         else
           rightComparator = env.store
 
@@ -271,7 +312,10 @@
       ctxt.drawImage(iconSpriteSheet, 240, colorOffset, 240, 240, x, y, 100, 100)
 
     ctxt.font = '20px Fira Code'
-    ctxt.fillText('@' + node.name, x, y + 100 + 20, 200)
+    if node.port == -999
+      ctxt.fillText('@' + node.name, x, y + 100 + 20, 200)
+    else
+      ctxt.fillText('@' + node.name + ":" + node.port, x, y + 100 + 20, 200)
 
     ctxt.font = '15px Fira Code'
     offset = 135
