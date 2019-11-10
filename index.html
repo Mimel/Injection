@@ -18,9 +18,10 @@
           </ol>
           <textarea id='injection_code' spellcheck="false">Type your inject.ion file here!</textarea>
         </div>
-        <button id='injection_reset_env' type='button'>Reset Environment!</button>
+        <button id='injection_reset_env' type='button'>Reset Environment</button>
         <button id='injection_run_line' type='button'>Run the Next Line!</button>
         <button id='injection_run_all' type='button'>Run Everything and Check!</button>
+        <button id='open_manual' type='button'>Open Reference Manual</button>
       </section>
       <section id='main_screen'>
         <header id='screen_header'>
@@ -41,6 +42,38 @@
     </div>
     <div id='win_container'>
       <img id='win_confirm' src='img/yourewinner.png'>
+    </div>
+    <div id='reference_manual'>
+      <h1>Inject.ion Reference Manual</h1>
+      <p></p>
+      <h2>Lexemes</h2>
+      <h3>Device: @[string] (e.g. @persephone)</h3>
+      <h3>Store: $</h3>
+      <h3>Field: #[string] (e.g. #cache)</h3>
+      <h3>Value: [store | field]</h3>
+      <h3>Comparator: [! | = | < | >] ('not equal to', 'equal to', 'less than', and 'greater than', respectively)</h3>
+      <h2>Connection Commands</h2>
+      <h3>Inject</h3>
+      <p>Syntax: 'inject [device] [value]'</p>
+      <h3>Return</h3>
+      <p>Syntax: 'return [value]'</p>
+      <h2>Data Manipulation Commands</h2>
+      <h3>Set</h3>
+      <p>Syntax: 'set [field] [value]'</p>
+      <h2>Math Commands</h2>
+      <h3>Add</h3>
+      <p>Syntax: 'add [field]'</p>
+      <h3>Sub</h3>
+      <p>Syntax: 'sub [field]'</p>
+      <h3>Invert</h3>
+      <p>Syntax: 'invert'</p>
+      <h2>Program Flow Commands</h2>
+      <h3>Mark</h3>
+      <p>Syntax: 'mark [string]'</p>
+      <h3>Jump</h3>
+      <p>Syntax: 'jump [value] [comparator] [value] [string]'</p>
+      <h3>Skip</h3>
+      <p>Syntax: 'skip [value] [comparator] [value] [integer]'</p>
     </div>
   </body>
 </html>

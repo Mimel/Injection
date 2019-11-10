@@ -461,6 +461,7 @@
       return $('#injection_code').prop('disabled', false);
     });
     $('#injection_reset_env').click(function(event) {
+      event.preventDefault();
       $('#line' + currentRunner.env().line).css('background-color', 'transparent');
       currentRunner.eraseAll();
       network = starter.copy();
@@ -496,6 +497,10 @@
       if (network.checkAgainst(goal)) {
         return $('#win_container').fadeIn(300);
       }
+    });
+    $('#open_manual').click(function(event) {
+      event.preventDefault();
+      return $('#reference_manual').fadeIn(500);
     });
     // On init:
     return rebalanceLines();

@@ -384,6 +384,7 @@
     $('#injection_code').prop('disabled', false)
 
   $('#injection_reset_env').click (event) ->
+    event.preventDefault()
     $('#line' + currentRunner.env().line).css('background-color', 'transparent')
 
     currentRunner.eraseAll()
@@ -419,6 +420,10 @@
     currentRunner.runAll()
     if network.checkAgainst(goal)
       $('#win_container').fadeIn(300)
+
+  $('#open_manual').click (event) ->
+    event.preventDefault()
+    $('#reference_manual').fadeIn(500)
 
   # On init:
   rebalanceLines()

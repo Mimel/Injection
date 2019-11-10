@@ -3,7 +3,7 @@
   src: url('../fonts/FiraCode/FiraCode-Regular.otf');
 }
 
-html, body, h1, canvas, ol, textarea {
+html, body, h1, h2, h3, p, canvas, ol, textarea {
   margin: 0;
   padding: 0;
 }
@@ -185,4 +185,23 @@ html, body {
 #win_confirm {
   width: 100px;
   height: 100px;
+}
+
+/* ----- MANUAL ----- */
+
+#reference_manual {
+  display: none;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: #DDDDDD;
+}
+
+#reference_manual > * {
+  font-family: 'Fira Code', monospace;
 }
